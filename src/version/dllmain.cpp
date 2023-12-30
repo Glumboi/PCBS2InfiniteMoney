@@ -28,6 +28,7 @@
 #include <filesystem>
 #include "offsets.h"
 #include "debugUtils.h"
+#include <direct.h>
 
 // Remove this line if you aren't proxying any functions.
 HMODULE hModule = LoadLibrary("C:\\Windows\\System32\\version.dll");
@@ -74,8 +75,8 @@ void LoadPlugins() {
 	std::string pluginFolder = std::string(buffer) + "\\Plugins";
 
 	if (!std::filesystem::exists(pluginFolder)) {
-		PutDebug("Plugins folder does not exist.");
-		return;
+		PutDebug("Plugins folder does not exist, creating a new one.");
+		_mkdir(pluginFolder.c_str());
 	}
 
 	for (const auto& entry : std::filesystem::directory_iterator(pluginFolder)) {

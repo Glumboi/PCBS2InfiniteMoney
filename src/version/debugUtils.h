@@ -1,4 +1,5 @@
 #pragma once
+#include <iomanip>  // For std::setw
 
 inline void PutDebug(std::string msg) {
 	std::cout << "[GLUMMY LOADER]: " << msg << std::endl;
@@ -11,19 +12,17 @@ inline VOID DebugToFile(std::string szInput)
 	log << "\n";
 }
 
-inline void TimeStampDebug(std::string msg) {
+inline void TimeStampDebug(const std::string& msg) {
 	std::time_t t = std::time(0); // get time now
 	std::tm* now = std::localtime(&t);
 
-	std::string timeStamp = now->tm_hour
-		+ ':'
-		+ now->tm_min
-		+ ':'
-		+ now->tm_sec
-		+ "-> ";
+	std::stringstream timeStampStream;
+	timeStampStream << std::setw(2) << std::setfill('0') << now->tm_hour << ':'
+		<< std::setw(2) << std::setfill('0') << now->tm_min << ':'
+		<< std::setw(2) << std::setfill('0') << now->tm_sec;
 
-	std::cout << timeStamp;
-	PutDebug(timeStamp);
+	std::string timeStamp = timeStampStream.str();
+	PutDebug(timeStamp + " -> " + msg);
 }
 
 inline void InitConsole() {

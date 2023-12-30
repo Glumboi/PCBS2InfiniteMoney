@@ -39,28 +39,26 @@ std::vector<HMODULE> loadedPlugins;  // Keep track of loaded plugins
 
 void Init()
 {
-	AllocConsole();
-	FILE* f;
-	freopen_s(&f, "CONOUT$", "w", stdout);
+	InitConsole();
 
 	//Load base address of GameAssembly.dll
 	gameAssembly = reinterpret_cast<uintptr_t>(GetModuleHandle("GameAssembly.dll"));
 
 	MH_Initialize();
-	std::cout << "Initialized MinHook" << std::endl;
-	std::cout << "GameAssembly.dll base address: " << std::to_string(gameAssembly) << std::endl;
-	//std::cout << "Press F2 on the Keyboard to add 1000 dollars" << std::endl;
+	TimeStampDebug("Initialized MinHook");
+	TimeStampDebug("GameAssembly.dll base address: " + std::to_string(gameAssembly));
+	//std::cout << "GameAssembly.dll base address: " << std::to_string(gameAssembly) << std::endl;
 }
 
 void LoadPlugin(const std::string& path) {
 	HMODULE hModule = LoadLibrary(path.c_str());
 	if (hModule == nullptr) {
 		DWORD error = GetLastError();
-		std::cerr << "Failed to load library " << path << " with error " << error << std::endl;
+		PutDebug("Failed to load library " + path + " with error: " + (char*)error);
 	}
 	else {
 		loadedPlugins.push_back(hModule);
-		std::cout << "Loaded library: " << path << std::endl;
+		PutDebug("Loaded library: " + path);
 
 		// Retrieve and call the entry point function if needed
 		PluginEntryPoint entryPoint = reinterpret_cast<PluginEntryPoint>(GetProcAddress(hModule, "PluginEntryPoint"));
@@ -76,7 +74,7 @@ void LoadPlugins() {
 	std::string pluginFolder = std::string(buffer) + "\\Plugins";
 
 	if (!std::filesystem::exists(pluginFolder)) {
-		std::cerr << "Plugins folder does not exist." << std::endl;
+		PutDebug("Plugins folder does not exist.");
 		return;
 	}
 

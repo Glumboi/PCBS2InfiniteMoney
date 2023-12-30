@@ -10,7 +10,7 @@ ModLoader::ModLoader() {
 void ModLoader::Init()
 {
 	this->LoadAllPlugins();
-	KeyBoardLoop();
+	this->KeyBoardLoop();
 }
 
 void ModLoader::LoadPlugin(const std::string& path) {
@@ -60,7 +60,11 @@ void ModLoader::KeyBoardLoop() {
 	{
 		if (GetKeyState(VK_F9) KEYISPRESSED)
 		{
-			TimeStampDebug("F9 pressed!");
+			TimeStampDebug("F9 pressed, reloading plugins!");
+			UnloadAllPlugins();
+			LoadAllPlugins();
+			TimeStampDebug("Plugins reloaded!");
+			Sleep(400);
 		}
 	}
 }

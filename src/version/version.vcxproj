@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="modLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="version.def" />
@@ -167,6 +168,7 @@
   <ItemGroup>
     <ClInclude Include="debugUtils.h" />
     <ClInclude Include="il2cpp.h" />
+    <ClInclude Include="modLoader.h" />
     <ClInclude Include="offsets.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

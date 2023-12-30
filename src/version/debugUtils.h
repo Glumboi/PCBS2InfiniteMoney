@@ -1,11 +1,10 @@
 #pragma once
-#include <iomanip>  // For std::setw
 
 inline void PutDebug(std::string msg) {
 	std::cout << "[GLUMMY LOADER]: " << msg << std::endl;
 }
 
-inline VOID DebugToFile(std::string szInput)
+inline void DebugToFile(std::string szInput)
 {
 	std::ofstream log("spartacus-proxy-version.log", std::ios_base::app | std::ios_base::out);
 	log << szInput;

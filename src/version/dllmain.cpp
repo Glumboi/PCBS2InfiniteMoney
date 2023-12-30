@@ -18,25 +18,17 @@
 #pragma comment(linker,"/export:VerQueryValueA=C:\\Windows\\System32\\version.VerQueryValueA,@16")
 #pragma comment(linker,"/export:VerQueryValueW=C:\\Windows\\System32\\version.VerQueryValueW,@17")
 
-#include <iostream>
-
 #include "windows.h"
-#include "ios"
-#include "fstream"
 #include <MinHook.h>
-#include <string>
-#include <filesystem>
 #include "offsets.h"
+#include "modLoader.h"
 #include "debugUtils.h"
-#include <direct.h>
 
 // Remove this line if you aren't proxying any functions.
 HMODULE hModule = LoadLibrary("C:\\Windows\\System32\\version.dll");
 HANDLE prHandle = GetCurrentProcess();
 
-// Function pointer type for the plugin entry point
-using PluginEntryPoint = void(*)();
-std::vector<HMODULE> loadedPlugins;  // Keep track of loaded plugins
+ModLoader* modLoaderInstance = NULL;
 
 void Init()
 {
@@ -48,55 +40,14 @@ void Init()
 	MH_Initialize();
 	TimeStampDebug("Initialized MinHook");
 	TimeStampDebug("GameAssembly.dll base address: " + std::to_string(gameAssembly));
-	//std::cout << "GameAssembly.dll base address: " << std::to_string(gameAssembly) << std::endl;
-}
 
-void LoadPlugin(const std::string& path) {
-	HMODULE hModule = LoadLibrary(path.c_str());
-	if (hModule == nullptr) {
-		DWORD error = GetLastError();
-		PutDebug("Failed to load library " + path + " with error: " + (char*)error);
-	}
-	else {
-		loadedPlugins.push_back(hModule);
-		PutDebug("Loaded library: " + path);
-
-		// Retrieve and call the entry point function if needed
-		PluginEntryPoint entryPoint = reinterpret_cast<PluginEntryPoint>(GetProcAddress(hModule, "PluginEntryPoint"));
-		if (entryPoint != nullptr) {
-			entryPoint();  // Call the entry point function
-		}
-	}
-}
-
-void LoadPlugins() {
-	char buffer[MAX_PATH];
-	GetCurrentDirectory(MAX_PATH, buffer);
-	std::string pluginFolder = std::string(buffer) + "\\Plugins";
-
-	if (!std::filesystem::exists(pluginFolder)) {
-		PutDebug("Plugins folder does not exist, creating a new one.");
-		_mkdir(pluginFolder.c_str());
-	}
-
-	for (const auto& entry : std::filesystem::directory_iterator(pluginFolder)) {
-		if (entry.path().extension() == ".dll") {
-			LoadPlugin(entry.path().string());
-		}
-	}
-}
-
-void UnloadPlugins() {
-	for (HMODULE hModule : loadedPlugins) {
-		FreeLibrary(hModule);
-	}
-	loadedPlugins.clear();
+	TimeStampDebug("Initializing ModLoader instance...");
+	modLoaderInstance = new ModLoader();
 }
 
 void Main()
 {
 	Init();
-	LoadPlugins();
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)

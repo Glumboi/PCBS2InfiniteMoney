@@ -28,7 +28,7 @@
 HMODULE hModule = LoadLibrary("C:\\Windows\\System32\\version.dll");
 HANDLE prHandle = GetCurrentProcess();
 
-ModLoader* modLoaderInstance = NULL;
+ModLoader* modLoaderInstance = nullptr;
 
 void Init()
 {
@@ -39,7 +39,15 @@ void Init()
 
 	MH_Initialize();
 	TimeStampDebug("Initialized MinHook");
-	TimeStampDebug("GameAssembly.dll base address: " + std::to_string(gameAssembly));
+
+	if (gameAssembly != NULL) {
+		TimeStampDebug("GameAssembly.dll base address: " + std::to_string(gameAssembly));
+	}
+	else // Notify user that we are in "universal" mode,
+		 //this loader can be used on any process actually, no need for specific modes or tweaks
+	{
+		TimeStampDebug("Could not load GameAssembly.dll, universal mode is risky!");
+	}
 
 	TimeStampDebug("Initializing ModLoader instance...");
 	modLoaderInstance = new ModLoader();

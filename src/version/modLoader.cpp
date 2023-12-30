@@ -9,8 +9,31 @@ ModLoader::ModLoader() {
 
 void ModLoader::Init()
 {
+	LoadConfig("./GlummyLoader.cfg");
 	this->LoadAllPlugins();
-	this->KeyBoardLoop();
+	CreateThread(0, 0, (LPTHREAD_START_ROUTINE)KeyboardHandler::KeyBoardLoop, this, 0, 0);
+}
+
+void ModLoader::LoadConfig(const std::string fileName)
+{
+	//Create a small config file
+	if (!std::filesystem::exists(fileName))
+	{
+		std::ofstream cfgFile(fileName);
+		cfgFile << "LoadASI=0";
+		cfgFile.close();
+	}
+
+	std::ifstream cfgFileIn(fileName);
+	if (cfgFileIn.good())
+	{
+		std::string sLine;
+		getline(cfgFileIn, sLine);
+		size_t lastEq = sLine.find('=') + 1;
+		std::string toggleSbStr = sLine.substr(lastEq, sLine.length() - lastEq);
+		TimeStampDebug("LOAD ASI: " + toggleSbStr);
+		this->skipASI = toggleSbStr == "0";
+	}
 }
 
 void ModLoader::LoadPlugin(const std::string& path) {
@@ -42,8 +65,15 @@ void ModLoader::LoadAllPlugins() {
 	}
 
 	for (const auto& entry : std::filesystem::directory_iterator(pluginsPath)) {
-		if (entry.path().extension() == ".dll") {
+		std::filesystem::path extension = entry.path().extension();
+		if (extension == ".dll") {
 			LoadPlugin(entry.path().string());
+		}
+		else if (extension == ".asi")
+		{
+			if (!this->skipASI) {
+				LoadPlugin(entry.path().string());
+			}
 		}
 	}
 }
@@ -55,14 +85,14 @@ void ModLoader::UnloadAllPlugins() {
 	this->loadedPlugins.clear();
 }
 
-void ModLoader::KeyBoardLoop() {
+void KeyboardHandler::KeyBoardLoop(ModLoader* loaderInstance) {
 	while (true)
 	{
 		if (GetKeyState(VK_F9) KEYISPRESSED)
 		{
 			TimeStampDebug("F9 pressed, reloading plugins!");
-			UnloadAllPlugins();
-			LoadAllPlugins();
+			loaderInstance->UnloadAllPlugins();
+			loaderInstance->LoadAllPlugins();
 			TimeStampDebug("Plugins reloaded!");
 			Sleep(400);
 		}

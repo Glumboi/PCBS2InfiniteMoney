@@ -14,7 +14,8 @@
 #define KEYISPRESSED < 0
 #define KEYISNOTPRESSED > 0
 
-enum ModLoaderInitState { //--> implement at some point
+enum ModLoaderInitState
+{ //--> implement at some point
 	UNDEFINED,
 	SUCC,
 	ERR,
@@ -38,6 +39,7 @@ private:
 	void LoadPlugin(const std::string& path);
 };
 
-struct KeyboardHandler {
+struct KeyboardHandler
+{
 	static void KeyBoardLoop(ModLoader* loaderInstance);
 };

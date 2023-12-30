@@ -1,6 +1,7 @@
 #pragma once
 
-inline void PutDebug(std::string msg) {
+inline void PutDebug(std::string msg)
+{
 	std::cout << "[GLUMMY LOADER]: " << msg << std::endl;
 }
 
@@ -11,7 +12,8 @@ inline void DebugToFile(std::string szInput)
 	log << "\n";
 }
 
-inline void TimeStampDebug(const std::string& msg) {
+inline void TimeStampDebug(const std::string& msg)
+{
 	std::time_t t = std::time(0); // get time now
 	std::tm* now = std::localtime(&t);
 
@@ -24,7 +26,8 @@ inline void TimeStampDebug(const std::string& msg) {
 	PutDebug(timeStamp + " -> " + msg);
 }
 
-inline void InitConsole() {
+inline void InitConsole()
+{
 	AllocConsole();
 	FILE* f;
 	freopen_s(&f, "CONOUT$", "w", stdout);

@@ -24,7 +24,8 @@ void Init()
 	MH_Initialize();
 	TimeStampDebug("Initialized MinHook");
 
-	if (gameAssembly != NULL) {
+	if (gameAssembly != NULL)
+	{
 		TimeStampDebug("GameAssembly.dll base address: " + std::to_string(gameAssembly));
 	}
 	else // Notify user that we are in "universal" mode,

@@ -29,7 +29,7 @@ class Program
             Console.WriteLine("Please enter the output file path:");
             outputFile = Console.ReadLine();
 
-            //Remove all doubles quotes 
+            //Remove all double quotes 
             inputFile = inputFile.Replace("\"", "");
             outputFile = outputFile.Replace("\"", "");
             searchFor = searchFor.Replace("\"", "");
@@ -44,8 +44,6 @@ class Program
         dumpedFunctionClass =
             JsonSerializer.Deserialize<DumpedFunctionClass>(
                 File.ReadAllText(inputFile));
-
-        // You can now use dumpedFunctionClass as per your requirements
 
         List<string> methods = new();
         foreach (var method in dumpedFunctionClass.ScriptMethod)

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net.WebSockets;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 public class ScriptMethod
 {
